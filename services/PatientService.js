@@ -75,4 +75,14 @@ module.exports = class PatientService {
             cb( ex, null );
         }
     }
+    
+    isEmailExists( in_email, cb ) {
+        try {
+            PatientModel.countDocuments( { email: in_email }, function( err, result ) {
+                result > 0 ? cb( err, true ) : cb( err, false );
+            } );    
+        } catch(ex) {
+            cb( ex, null );
+        }
+    }
 }
