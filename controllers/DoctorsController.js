@@ -112,7 +112,7 @@ module.exports = class DoctorsController {
                 });
             }
 
-            DoctorServiceObj.insert( req, res, next, function( err, result ) {
+            DoctorServiceObj.isEmailExists( in_data.email, function( err, result ) {
                 if( err ) {
                     return res.send({
                         status: 400,
@@ -122,12 +122,34 @@ module.exports = class DoctorsController {
                     });
                 } else {
 
-                    return res.send({
-                        status: 200,
-                        msg: 'Record inserted',
-                        err: err,
-                        result: result
-                    });
+                    if( result ) {
+                        return res.send({
+                            status: 400,
+                            code: 400,
+                            msg: 'Email already exists',
+                            data: ''
+                        });     
+                    } else {
+
+                        DoctorServiceObj.insert( req, res, next, function( err, result ) {
+                            if( err ) {
+                                return res.send({
+                                    status: 400,
+                                    code: 400,
+                                    msg: 'Exception err occur',
+                                    data: err.toString()
+                                });
+                            } else {
+            
+                                return res.send({
+                                    status: 200,
+                                    msg: 'Record inserted',
+                                    err: err,
+                                    result: result
+                                });
+                            }
+                        } );                    
+                    }
                 }
             } );
         } catch(ex) {
