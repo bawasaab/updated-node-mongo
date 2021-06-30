@@ -1,4 +1,4 @@
 module.exports = {
-    PatientsController : require('./PatientsController'),
-    DoctorsController : require('./DoctorsController'),
+    AuthController : require('./AuthController'),
+    UserController : require('./UserController'),
 };

@@ -1,8 +1,14 @@
-const mongodbUrl = "test";
-let basePath = 'https://mongodb-app-2.herokuapp.com';
+const dbUsername = `deepak`;
+const dbPassword = `rAlYCkd3p6uJOFbK`;
+const dbName = `supagrab`;
+const mongodbUrl = `mongodb+srv://${dbUsername}:${dbPassword}@cartcluster.ozjjy.mongodb.net/${dbName}`;
+const basePath = 'http://localhost:3000/';
 module.exports = {
     mongodbUrl: mongodbUrl,
     basePath: basePath,
-    patientsImagePath: basePath +'/images/uploads/patients/',
-    doctorsImagePath: basePath +'/images/uploads/doctors/',
+
+    userImageUploadPath: 'public/images/uploads/users',
+    userImageBasePath: basePath + 'images/uploads/users',
+
+    JWT_SECRET: 'secretKey'
 }

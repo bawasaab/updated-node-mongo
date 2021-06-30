@@ -1,47 +1,75 @@
-var express = require('express');
-var router = express.Router();
-var MongoClient = require('mongodb').MongoClient
+const express = require('express');
+const router = express.Router();
 
+const UsersController = require('../controllers').UserController;
+const UserControllerObj = new UsersController();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  
-  MongoClient.connect('mongodb+srv://d190129k_chikitsa:z@UKqEpMU@cluster0.3xkqp.mongodb.net/test', function (err, client) {
-    if (err) throw 'deepak err'+ err
+var userImagePath = require('../config/config').userImageUploadPath;
+/**
+ * IMAGE UPLOAD STARTS
+ */
+const path = require('path');
+const multer  = require('multer');
 
-    var db = client.db('shop')
-      db.collection("customers").findOne({}, function(err, result) {
-        if (err) throw err;
-        return res.send({
-          status: 200,
-          msg: 'Record found',
-          data: result
-        });
-      });
-  });
-
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, userImagePath)
+  },
+  filename: function (req, file, cb) {
+    
+    let id = req.params.id;
+    let originalname = file.originalname;
+    let newFileName = id;
+    let extention = path.extname(originalname);
+    let fullFileName = newFileName + extention;
+    let fullFileNameWithPath = userImagePath +'/'+ fullFileName;
+    req.params.imageDetails = {
+      fileOriginalname : originalname,
+      newFileName : newFileName,
+      fileExtention : extention,
+      fullFileName : fullFileName,
+      fullFileNameWithPath : fullFileNameWithPath
+    };
+    cb(null , fullFileName );
+  }
 });
 
-router.post( '/', function( req, res, next ) {
+const upload = multer({
+  storage: storage,
+  limits : {fileSize : 1000000} // (1000000 bytes = 1MB)
+});
+/**
+ * IMAGE UPLOAD ENDS
+ */
 
+/**
+ * USER ROUTING STARTS
+ */
+router.post('/changePic/:id', upload.single('profile_pic'), [
+  UserControllerObj.changeProfilePic
+]);
 
-  MongoClient.connect('mongodb+srv://d190129k_chikitsa:z@UKqEpMU@cluster0.3xkqp.mongodb.net/test', function (err, client) {
-    if (err) throw 'deepak err'+ err
+router.patch('/:id', [
+  UserControllerObj.updateUser
+]);
 
-    var db = client.db('shop')
+router.delete('/:id', [
+  UserControllerObj.deleteUser
+]);
 
-    var myobj = { name: "Company Inc", address: "Highway 37" };
-      db.collection("customers").insertOne(myobj, function(err, result) {
-        if (err) throw err;
-        console.log("1 document inserted");
-        // db.close();
-        return res.send({
-          status: 200,
-          msg: 'Record inserted',
-          data: myobj
-        });
-      });
-  });
-} );
+router.get('/:id', [
+  UserControllerObj.getUserById
+]);
+
+router.post('/', [
+  UserControllerObj.insertUser
+]);
+
+router.get('/', [
+  UserControllerObj.getAllUser
+]);
+/**
+ * USER ROUTING ENDS
+ */
 
 module.exports = router;

@@ -1,4 +1,4 @@
 module.exports = {
-    "PatientService": require('./PatientService'),
-    "DoctorService": require('./DoctorService'),
+    ResponseService : require('./ResponseService'),
+    UserService : require('./UserService'),
 };
